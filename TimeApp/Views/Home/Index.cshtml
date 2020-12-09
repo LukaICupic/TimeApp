@@ -1,0 +1,35 @@
+﻿@model List<Report>
+@inject SignInManager<ApplicationUser> signInManager
+
+
+@{
+    ViewBag.Title = "Reports";
+}
+
+<h3>Reports</h3>
+
+@if (signInManager.IsSignedIn(User) && User.IsInRole("User"))
+{
+    <a asp-action="AddReport" class="btn btn-primary">New time report</a>
+}
+
+@if (Model.Any())
+{
+    foreach (var report in Model)
+    {
+        <div class="card m-3">
+            <div class="card-header">
+                <h4>@report.Time.ToString("HH:mm:ss")</h4>
+            </div>
+
+            <div class="card-body">
+                <h5 class="card-title">@report.FirstName&nbsp;@report.LastName</h5>
+            </div>
+        </div>
+    }
+}
+
+else
+{
+    <h4>There are no time reports yet created.</h4>
+}

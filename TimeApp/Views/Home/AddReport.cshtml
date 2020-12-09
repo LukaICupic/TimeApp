@@ -1,0 +1,48 @@
+﻿@model ReportCreateViewModel
+
+@{
+    ViewBag.Title = "Create report";
+}
+
+<h3>Create report</h3>
+<br />
+
+<form method="post" asp-action="AddReport">
+
+    <div class="form-group">
+        <label asp-for="FirstName">First name</label>
+        <div>
+            <input asp-for="FirstName" class="col-sm-2 col-form-label" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <br />
+        <label asp-for="LastName">Last name</label>
+        <div>
+            <input asp-for="LastName" class="col-sm-2 col-form-label" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <br />
+        <label asp-for="Time">Time</label>
+        <div>
+            <input asp-for="Time" class="col-sm-2 col-form-label" />
+            <span asp-validation-for="Time" class="text-danger"></span>
+        </div>
+    </div>
+
+
+    <button type="submit"
+            class="btn btn-primary">
+        Create
+    </button>
+
+    <a asp-action="index" class="btn btn-secondary"
+       onclick="return confirm('The report will not be saved if you continue with this operation.')">
+        Cancel
+    </a>
+</form>

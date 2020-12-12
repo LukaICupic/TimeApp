@@ -13,6 +13,6 @@ namespace TimeApp.Models.HomeVM
         [Required(ErrorMessage = "Lastname is a required field")]
         public string LastName { get; set; }
         [Required(ErrorMessage = "Time is a required field")]
-        public DateTime Time { get; set; }
+        public TimeSpan Time { get; set; }
     }
 }

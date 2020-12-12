@@ -29,13 +29,13 @@
                         @report.Time
                     </h4>
 
-                    @if (report.Approved == true && report.Remove == false)
+                    @if (report.Status.Value == "Accepted")
                     {
                         <h5>
-                            Status: Approved
+                            Status: Accepted
                         </h5>
                     }
-                    else if (report.Approved == false || report.Pending == true)
+                    else if (report.Status.Value == "Reviewing")
                     {
                         <h5>
                             Status: Pending
@@ -45,7 +45,7 @@
                     else
                     {
                         <h5>
-                            Status: Pending
+                            Status: Rejected
                         </h5>
                     }
                 </div>
@@ -53,7 +53,7 @@
                 @* izbristi kad god želi ili samo kad je odbijeno? *@
                 <div class="card-footer">
 
-                    @if (report.Remove == true)
+                    @if (report.Status.Value == "Rejected")
                     {
                     <button type="submit" asp-action="ResendReport" asp-route-id="@report.Id" class="btn btn-primary"
                             onclick="return confirm(`The report will be sent again for re-evaluation`)">

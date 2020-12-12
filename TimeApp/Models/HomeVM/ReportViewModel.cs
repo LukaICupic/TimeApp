@@ -19,10 +19,8 @@ namespace TimeApp.Models.HomeVM
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public DateTime Time { get; set; }
-        public bool Approved { get; set; }
-        public bool Remove { get; set; }
+        public TimeSpan Time { get; set; }
+        public string Value { get; set; }
         public bool IsHidden { get; set; }
-        public bool Pending { get; set; }
     }
 }

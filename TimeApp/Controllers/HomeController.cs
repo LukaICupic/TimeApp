@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using TimeApp.Data;
 using TimeApp.Infrastructure.Interfaces;
-using TimeApp.Models;
 using TimeApp.Models.HomeVM;
 
 namespace TimeApp.Controllers
@@ -26,11 +22,6 @@ namespace TimeApp.Controllers
             this.userManager = userManager;
         }
 
-        [HttpGet]
-        public IActionResult proba()
-        {
-            return View();
-        }
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -41,7 +32,7 @@ namespace TimeApp.Controllers
 
             foreach (var rep in reports)
             {
-                if (rep.Approved == true && rep.Remove == false && rep.Pending == false)
+                if (rep.Status.Value == "Accepted")
                 {
                     ReportViewModel model = new ReportViewModel(rep);
                     reportsList.Add(model);
@@ -79,26 +70,16 @@ namespace TimeApp.Controllers
         {
             if (ModelState.IsValid)
             {
-
-                //definirati da ovakvi "in review" reporti idu u zaseban page u sučelju adminovom
-                //definirati ujedno da se nedefinirani reporti pojavljuju kod usera u zasebnoj rubrici
-
-                var date = new DateTime(2000, 1, 1, model.Time.Hour, model.Time.Minute, model.Time.Second);
                 var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
-                Report newReport = new Report(model.FirstName, model.LastName, date)
+                Report newReport = new Report(model.FirstName, model.LastName, model.Time)
                 {
-                    //hardkodirano zasad
-                    Approved = false,
-                    Remove = false,
-                    IsHidden = false,
-                    Pending = true,
+                    ApplicationUser = user,
                     ApplicationUserId = user.Id,
-                    ApplicationUser = user
-                   
                 };
-
+                
                 await reportRepo.AddReport(newReport);
+                reportRepo.SaveChanges();
                 return RedirectToAction("index");
             }
 
@@ -151,7 +132,8 @@ namespace TimeApp.Controllers
                 return View("NotFound");
             }
 
-            await reportRepo.DeleteReport(report);
+            await reportRepo.ChangeStatus(report, "Deleted");
+            reportRepo.SaveChanges();
             return RedirectToAction("MyReports");
         }
 
@@ -166,11 +148,10 @@ namespace TimeApp.Controllers
                 return View("NotFound");
             }
 
-            await reportRepo.ResendReport(report);
+            await reportRepo.ChangeStatus(report, "Reviewing");
+            reportRepo.SaveChanges();
             return RedirectToAction("MyReports");
         }
-
-        //resendreport
 
         [HttpPost]
         //action for admin
@@ -184,8 +165,9 @@ namespace TimeApp.Controllers
                 return View("NotFound");
             }
 
-            await reportRepo.RemoveReport(report);
-            return RedirectToAction("index");
+            await reportRepo.ChangeStatus(report, "Rejected");
+            reportRepo.SaveChanges();
+            return RedirectToAction("IncomingReports");
 
         }
 
@@ -201,7 +183,8 @@ namespace TimeApp.Controllers
                 return View("NotFound");
             }
 
-            await reportRepo.ApproveReport(report);
+            await reportRepo.ChangeStatus(report, "Accepted");
+            reportRepo.SaveChanges();
             return RedirectToAction("IncomingReports");
         }
     }

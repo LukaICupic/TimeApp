@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +27,14 @@ namespace TimeApp
 
         async Task CreateRole(IServiceProvider serviceProvider)
         {
-            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var db = serviceProvider.GetRequiredService<AppDbContext>();
+            //db.Database.Migrate();
+
+            //obrisati nakon što završim
+            db.Database.EnsureDeleted();
+            db.Database.EnsureCreated();
+
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
             var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             string role = "Admin";
@@ -41,10 +45,10 @@ namespace TimeApp
 
 
             if (!existingRole)
-                await RoleManager.CreateAsync(new IdentityRole(role));
+                await RoleManager.CreateAsync(new IdentityRole<int>(role));
 
             if (!existingSecondRole)
-                await RoleManager.CreateAsync(new IdentityRole(userRole));
+                await RoleManager.CreateAsync(new IdentityRole<int>(userRole));
 
             var adminUser = await UserManager.FindByEmailAsync("admin@gmail.com");
 
@@ -74,7 +78,8 @@ namespace TimeApp
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options => {
+            //prilagoditi
+            services.AddIdentity<ApplicationUser, IdentityRole<int>>(options => {
 
                 options.Password.RequiredLength = 6;
                 options.Password.RequireLowercase = false;
@@ -104,10 +109,11 @@ namespace TimeApp
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            //proučiti
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             app.UseHttpsRedirection();

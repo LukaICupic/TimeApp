@@ -26,7 +26,15 @@ namespace TimeApp.Infrastructure.Repositories
 
         public async Task<ICollection<Report>> GetReports()
         {
-            var model = await context.Reports.ToListAsync();
+            var model = await context.Reports
+                                     .Where(r => r.IsHidden == false)
+                                     .OrderBy(r => r.Time).ToListAsync();
+            return model;
+        }
+
+        public async Task<ICollection<Report>> GetUnacceptedReports()
+        {
+            var model = await context.Reports.Where(r => r.IsHidden == false && r.Remove == true || r.Pending == true).ToListAsync();
             return model;
         }
 
@@ -42,8 +50,9 @@ namespace TimeApp.Infrastructure.Repositories
             var newReport = await context.Reports.SingleAsync(i => i.Id == report.Id);
 
             newReport.Approved = true;
-            newReport.Remove = report.Remove;
+            newReport.Remove = false;
             newReport.IsHidden = report.IsHidden;
+            newReport.Pending = false;
 
             await context.SaveChangesAsync();
             return newReport;
@@ -53,9 +62,10 @@ namespace TimeApp.Infrastructure.Repositories
         {
             var newReport = await context.Reports.SingleAsync(i => i.Id == report.Id);
 
-            newReport.Approved = report.Approved;
+            newReport.Approved = false;
             newReport.Remove = true;
             newReport.IsHidden = report.IsHidden;
+            newReport.Pending = false;
 
             await context.SaveChangesAsync();
             return newReport;
@@ -68,6 +78,20 @@ namespace TimeApp.Infrastructure.Repositories
             newReport.Approved = report.Approved;
             newReport.Remove = report.Remove;
             newReport.IsHidden = true;
+            newReport.Pending = false;
+
+            await context.SaveChangesAsync();
+            return newReport;
+        }
+
+        public async Task<Report> ResendReport(Report report)
+        {
+            var newReport = await context.Reports.SingleAsync(i => i.Id == report.Id);
+
+            newReport.Approved = false;
+            newReport.Remove = false;
+            newReport.IsHidden = false;
+            newReport.Pending = true;
 
             await context.SaveChangesAsync();
             return newReport;

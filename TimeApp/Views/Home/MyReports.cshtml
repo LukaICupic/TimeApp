@@ -1,0 +1,72 @@
+﻿@model List<Report>
+
+
+@{
+    ViewBag.Title = "Report";
+}
+<form method="post">
+
+     <a asp-action="AddReport" class="btn btn-primary">New time report</a>
+
+    @if (Model.Any())
+    {
+        @foreach (var report in Model)
+        {
+
+            @*<input type="hidden" asp-for="Id" />*@
+
+            <div class="card m-3">
+                <div class="card-header">
+                    <h4>
+                        @report.FirstName&nbsp;@report.LastName
+                    </h4>
+                </div>
+
+                <div class="card-body">
+
+                    <h4>
+                        Time:
+                        @report.Time
+                    </h4>
+
+                    @if (report.Approved == true && report.Remove == false)
+                    {
+                        <h5>
+                            Status: Approved
+                        </h5>
+                    }
+                    else if (report.Approved == false || report.Pending == true)
+                    {
+                        <h5>
+                            Status: Pending
+                        </h5>
+                    }
+
+                    else
+                    {
+                        <h5>
+                            Status: Pending
+                        </h5>
+                    }
+                </div>
+
+                @* izbristi kad god želi ili samo kad je odbijeno? *@
+                <div class="card-footer">
+
+                    @if (report.Remove == true)
+                    {
+                    <button type="submit" asp-action="ResendReport" asp-route-id="@report.Id" class="btn btn-primary"
+                            onclick="return confirm(`The report will be sent again for re-evaluation`)">
+                        Resend
+                    </button>
+                    }
+
+                    <button type="submit" asp-action="DeleteReport" asp-route-id="@report.Id" class="btn btn-secondary"
+                            onclick="return confirm(`Are you sure you want to delete this report?`)">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        }
+    }
+</form>

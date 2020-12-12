@@ -1,4 +1,4 @@
-﻿@model List<Report>
+﻿@model List<ReportViewModel>
 @inject SignInManager<ApplicationUser> signInManager
 
 
@@ -6,30 +6,37 @@
     ViewBag.Title = "Reports";
 }
 
-<h3>Reports</h3>
+<h3>List of the best times</h3>
+<form method="post">
 
-@if (signInManager.IsSignedIn(User) && User.IsInRole("User"))
-{
-    <a asp-action="AddReport" class="btn btn-primary">New time report</a>
-}
-
-@if (Model.Any())
-{
-    foreach (var report in Model)
+    @if (Model.Any())
     {
-        <div class="card m-3">
-            <div class="card-header">
-                <h4>@report.Time.ToString("HH:mm:ss")</h4>
-            </div>
+        foreach (var report in Model)
+        {
+            <div class="card m-3">
+                <div class="card-header">
+                    <h4>@report.Time.ToString("HH:mm:ss")</h4>
+                </div>
 
-            <div class="card-body">
-                <h5 class="card-title">@report.FirstName&nbsp;@report.LastName</h5>
+                <div class="card-body">
+                    <h5 class="card-title">@report.FirstName&nbsp;@report.LastName</h5>
+                </div>
+
+                @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                {
+                    <div class="card-footer">
+                        <button type="submit" asp-action="RemoveReport" asp-route-id="@report.Id" class="btn btn-secondary"
+                                onclick="return confirm(`Are you sure you want to remove this report?`)">
+                            Remove
+                        </button>
+                    </div>
+                }
             </div>
-        </div>
+        }
     }
-}
 
-else
-{
-    <h4>There are no time reports yet created.</h4>
-}
+    else
+    {
+        <h4>There are no time reports yet accepted.</h4>
+    }
+</form>

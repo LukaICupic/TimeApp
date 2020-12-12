@@ -21,6 +21,7 @@ namespace TimeApp.Data
         public bool Approved { get; set; }
         public bool Remove { get; set; }
         public bool IsHidden { get; set; }
+        public bool Pending { get; set; }
         public string ApplicationUserId { get; set; }
         public virtual ApplicationUser ApplicationUser { get; set; }
     }

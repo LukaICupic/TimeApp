@@ -15,12 +15,14 @@ namespace TimeApp.Models.HomeVM
             FirstName = r.FirstName;
             LastName = r.LastName;
             Time = r.Time;
+            StatusId = r.StatusId;
+            ApplicationUserId = r.ApplicationUserId;
         }
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public TimeSpan Time { get; set; }
-        public string Value { get; set; }
-        public bool IsHidden { get; set; }
+        public int StatusId { get; set; }
+        public int ApplicationUserId { get; set; }
     }
 }

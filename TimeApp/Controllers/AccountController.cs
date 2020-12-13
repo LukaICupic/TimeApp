@@ -90,6 +90,3 @@ namespace TimeApp.Controllers
         }
     }
 }
-
-//dodaj provjeru da li je Email adresa unesena (lek. 76)
-//error page

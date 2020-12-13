@@ -47,8 +47,8 @@ namespace TimeApp.Controllers
             return View();
         }
 
-        [HttpPost]
         //action for user
+        [HttpPost]
         public async Task<IActionResult> AddReport(ReportCreateViewModel model)
         {
             if (ModelState.IsValid)
@@ -69,8 +69,8 @@ namespace TimeApp.Controllers
             return View(model);
         }
 
-        [HttpGet]
         //action for admin
+        [HttpGet]
         public async Task<IActionResult> IncomingReports()
         {
             var reports = await reportRepo.GetUnacceptedReports();

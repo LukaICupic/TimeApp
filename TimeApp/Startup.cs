@@ -28,7 +28,7 @@ namespace TimeApp
         async Task CreateRole(IServiceProvider serviceProvider)
         {
             var db = serviceProvider.GetRequiredService<AppDbContext>();
-            //db.Database.Migrate();
+            db.Database.Migrate();
 
             //obrisati nakon što završim
             //db.Database.EnsureDeleted();

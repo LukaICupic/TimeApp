@@ -30,10 +30,6 @@ namespace TimeApp
             var db = serviceProvider.GetRequiredService<AppDbContext>();
             db.Database.Migrate();
 
-            //obrisati nakon što završim
-            //db.Database.EnsureDeleted();
-            db.Database.EnsureCreated();
-
             var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
             var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 

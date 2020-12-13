@@ -8,40 +8,42 @@
 
 @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
 {
-
     <h3>Pending reports</h3>
 
-    <form method="post">
-        @if (Model.Any())
+    @if (Model.Any())
+    {
+        foreach (var report in Model)
         {
-            foreach (var report in Model)
-            {
-                <div class="card m-3">
-                    <div class="card-header">
-                        <h4>@report.Time</h4>
-                    </div>
+            <div class="card m-3">
+                <div class="card-header">
+                    <h4>@report.Time</h4>
+                </div>
 
-                    <div class="card-body">
-                        <h5 class="card-title">@report.FirstName&nbsp;@report.LastName</h5>
-                    </div>
+                <div class="card-body">
+                    <h5 class="card-title">@report.FirstName&nbsp;@report.LastName</h5>
+                </div>
 
-                    <div class="card-footer">
-                        <button type="submit" asp-action="AcceptReport" asp-route-id="@report.Id" class="btn btn-primary">
+                <div class="card-footer">
+                    <form method="post">
+                        <input type="hidden" value="1" name="statId" />
+                        <button type="submit" asp-action="UpdateStatus" asp-route-id="@report.Id" class="btn btn-primary">
                             Accept
                         </button>
-
-                        <button type="submit" asp-action="RemoveReport" asp-route-id="@report.Id" class="btn btn-secondary"
+                    </form>
+                    <form method="post">
+                        <input type="hidden" value="2" name="statId" />
+                        <button type="submit" asp-action="UpdateStatus" asp-route-id="@report.Id" class="btn btn-secondary"
                                 onclick="return confirm(`Are you sure you want to remove this report?`)">
                             Remove
                         </button>
-                    </div>
+                    </form>
                 </div>
-            }
+            </div>
         }
+    }
 
-        else
-        {
-            <h4>There are no reports pending.</h4>
-        }
-    </form>
- }
+    else
+    {
+        <h4>There are no time reports pending.</h4>
+    }
+}

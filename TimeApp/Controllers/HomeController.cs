@@ -22,7 +22,6 @@ namespace TimeApp.Controllers
             this.userManager = userManager;
         }
 
-
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -40,22 +39,6 @@ namespace TimeApp.Controllers
             }
 
             return View(reportsList);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Details(int Id)
-        {
-            var report = await reportRepo.GetReport(Id);
-
-            if (report == null)
-            {
-                ViewBag.ErrorMessage = "The report does not exist";
-                return View("NotFound");
-            }
-
-            ReportViewModel model = new ReportViewModel(report);
-
-            return View(model);
         }
 
         [HttpGet]
@@ -79,7 +62,7 @@ namespace TimeApp.Controllers
                 };
                 
                 await reportRepo.AddReport(newReport);
-                reportRepo.SaveChanges();
+                await reportRepo.SaveChangesAsync();
                 return RedirectToAction("index");
             }
 
@@ -121,41 +104,8 @@ namespace TimeApp.Controllers
             return View(reportsList);
         }
 
-        //action for user
         [HttpPost]
-        public async Task<IActionResult> DeleteReport(int Id)
-        {
-            var report = await reportRepo.GetReport(Id);
-            if (report == null)
-            {
-                ViewBag.ErrorMessage = "The report does not exist";
-                return View("NotFound");
-            }
-
-            await reportRepo.ChangeStatus(report, "Deleted");
-            reportRepo.SaveChanges();
-            return RedirectToAction("MyReports");
-        }
-
-        //action for user
-        [HttpPost]
-        public async Task<IActionResult> ResendReport(int Id)
-        {
-            var report = await reportRepo.GetReport(Id);
-            if (report == null)
-            {
-                ViewBag.ErrorMessage = "The report does not exist";
-                return View("NotFound");
-            }
-
-            await reportRepo.ChangeStatus(report, "Reviewing");
-            reportRepo.SaveChanges();
-            return RedirectToAction("MyReports");
-        }
-
-        [HttpPost]
-        //action for admin
-        public async Task<IActionResult> RemoveReport(int Id)
+        public async Task<IActionResult> UpdateStatus(int Id, int statId)
         {
             var report = await reportRepo.GetReport(Id);
 
@@ -165,27 +115,9 @@ namespace TimeApp.Controllers
                 return View("NotFound");
             }
 
-            await reportRepo.ChangeStatus(report, "Rejected");
-            reportRepo.SaveChanges();
-            return RedirectToAction("IncomingReports");
-
-        }
-
-        [HttpPost]
-        //action for admin
-        public async Task<IActionResult> AcceptReport(int Id)
-        {
-            var report = await reportRepo.GetReport(Id);
-
-            if (report == null)
-            {
-                ViewBag.ErrorMessage = "The report does not exist";
-                return View("NotFound");
-            }
-
-            await reportRepo.ChangeStatus(report, "Accepted");
-            reportRepo.SaveChanges();
-            return RedirectToAction("IncomingReports");
+            await reportRepo.ChangeStatus(report, statId);
+            await reportRepo.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
     }
 }

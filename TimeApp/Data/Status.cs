@@ -6,6 +6,6 @@ namespace TimeApp.Data
     {
         public int Id { get; set; }
         public string Value { get; set; }
-        public ICollection<Report> Reports { get; set; }
+        public ICollection<Report> Reports { get; set; } = new List<Report>();
     }
 }

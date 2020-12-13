@@ -7,7 +7,6 @@
 }
 
 <h3>List of the best times</h3>
-<form method="post">
 
     @if (Model.Any())
     {
@@ -24,12 +23,15 @@
 
                 @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                 {
-                    <div class="card-footer">
-                        <button type="submit" asp-action="RemoveReport" asp-route-id="@report.Id" class="btn btn-secondary"
-                                onclick="return confirm(`Are you sure you want to remove this report?`)">
-                            Remove
-                        </button>
-                    </div>
+                    <form method="post">
+                        <div class="card-footer">
+                            <input type="hidden" value="2" name="statId" />
+                            <button type="submit" asp-action="UpdateStatus" asp-route-id="@report.Id" class="btn btn-secondary"
+                                    onclick="return confirm(`Are you sure you want to remove this report?`)">
+                                Remove
+                            </button>
+                        </div>
+                    </form>
                 }
             </div>
         }
@@ -39,4 +41,3 @@
     {
         <h4>There are no time reports yet accepted.</h4>
     }
-</form>

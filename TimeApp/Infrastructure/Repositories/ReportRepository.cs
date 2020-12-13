@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -72,71 +73,18 @@ namespace TimeApp.Infrastructure.Repositories
             return report;
         }
 
-        public async Task<Report> ChangeStatus(Report report, string status)
+        public async Task<Report> ChangeStatus(Report report, int statId)
         {
-            var stat = await context.Statuses.SingleAsync(s => s.Value == status);
+            var stat = await context.Statuses.SingleAsync(s => s.Id == statId);
 
-            if (stat.Reports == null)
-            {
-                stat.Reports = new List<Report>
-                {
-                    report
-                };
-            }
-
-            else
-            {
-                stat.Reports.Add(report);
-            }
-
-            //report.Status = stat;
+            report.Status = stat;
             report.StatusId = stat.Id;
 
             return report;
         }
-
-        //public async Task<Report> ApproveReport(Report report)
-        //{
-        //    var status = await context.Statuses.SingleAsync(s => s.Value == "Accepted");
-        //    status.Reports.Add(report);
-
-        //    report.Status = status;
-        //    report.StatusId = status.Id;
-
-        //    return report;
-        //}
-
-        //public async Task<Report> RemoveReport(Report report)
-        //{
-        //    var status = await context.Statuses.SingleAsync(s => s.Value == "Removed");
-        //    status.Reports.Add(report);
-
-        //    report.Status = status;
-        //    report.StatusId = status.Id;
-
-        //    return report;
-
-        //}
-
-        //public async Task<Report> DeleteReport(Report report)
-        //{
-        //    var newReport = await GetReport(report.Id);
-        //    newReport.Status.Value = "Removed";
-        //    return newReport;
-        //}
-
-        //public async Task<Report> ResendReport(Report report)
-        //{
-        //    var newReport = await GetReport(report.Id);
-        //    newReport.Status.Value = "Reviewing";
-        //    return newReport;
-        //}
-
-
-        public void SaveChanges()
+        public Task<int> SaveChangesAsync()
         {
-            context.SaveChanges();
-
+           return context.SaveChangesAsync();
         }
     }
 }
